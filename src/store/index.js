@@ -1,12 +1,19 @@
 import { createSlice, configureStore } from "@reduxjs/toolkit";
 
-const uiState = { cartIsVisible: false };
+const uiState = { cartIsVisible: false, notification: null };
 const uiSlice = createSlice({
   name: "cart",
   initialState: uiState,
   reducers: {
     toggle(state) {
       state.cartIsVisible = !state.cartIsVisible;
+    },
+    showNotification(state, action) {
+      state.notification = {
+        status: action.payload.status,
+        title: action.payload.title,
+        message: action.payload.message,
+      };
     },
   },
 });
@@ -21,9 +28,7 @@ const cartSlice = createSlice({
   reducers: {
     addItemToCart(state, action) {
       const newItem = action.payload;
-      const existingItem = state.items.find(
-        (item) => item.id === newItem.id
-      );
+      const existingItem = state.items.find((item) => item.id === newItem.id);
       state.totalQuantity++;
       if (!existingItem) {
         state.items.push({
@@ -43,9 +48,7 @@ const cartSlice = createSlice({
       const existingItem = state.items.find((item) => item.id === id);
       state.totalQuantity--;
       if (existingItem.quantity === 1) {
-        state.items = state.items.filter(
-          (item) => item.id !== id
-        );
+        state.items = state.items.filter((item) => item.id !== id);
       } else {
         existingItem.quantity--;
         existingItem.totalPrice = existingItem.totalPrice - existingItem.price;
